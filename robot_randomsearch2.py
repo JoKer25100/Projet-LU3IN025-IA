@@ -31,6 +31,9 @@ class Robot_player(Robot):
     last_trans = 0
     last_rot = 0
 
+    eval_par_iter=3
+    essai=0
+
     #Perso
 
     def __init__(self, x_0, y_0, theta_0, name="n/a", team="n/a",evaluations=0,it_per_evaluation=0):
@@ -53,10 +56,10 @@ class Robot_player(Robot):
 
 
     def reset(self):
-        self.score = 0
         self.last_trans = 0 
         self.last_rot= 0
         super().reset()
+        self.theta=random.uniform(0,360)
 
     def step(self, sensors, sensor_view=None, sensor_robot=None, sensor_team=None):
 
@@ -65,47 +68,52 @@ class Robot_player(Robot):
         # - la liste "param", définie ci-dessus, permet de stocker les paramètres de la fonction de contrôle
         # - la fonction de controle est une combinaison linéaire des senseurs, pondérés par les paramètres (c'est un "Perceptron")
         
-        #Perso
-        self.score += (self.log_sum_of_translation - self.last_trans) * (1-abs(self.log_sum_of_rotation - self.last_rot))
-        self.last_trans = self.log_sum_of_translation
-        self.last_rot = self.log_sum_of_rotation
-        #Perso
         
+
         # toutes les X itérations: le robot est remis à sa position initiale de l'arène avec une orientation aléatoire
         if self.iteration % self.it_per_evaluation == 0:
-                if self.iteration > 0:
-                    print ("\tparameters           =",self.param)
-                    print ("\ttranslations         =",self.log_sum_of_translation,"; rotations =",self.log_sum_of_rotation) # *effective* translation/rotation (ie. measured from displacement)
-                    print ("\tdistance from origin =",math.sqrt((self.x-self.x_0)**2+(self.y-self.y_0)**2))
-                    #Perso
-                    print (f"\t score essai {self.trial} : {self.score}")
-                    if (self.replay == False):
+            if self.iteration > 0:
+                print ("\tparameters           =",self.param)
+                print ("\ttranslations         =",self.log_sum_of_translation,"; rotations =",self.log_sum_of_rotation) # *effective* translation/rotation (ie. measured from displacement)
+                print ("\tdistance from origin =",math.sqrt((self.x-self.x_0)**2+(self.y-self.y_0)**2))
+                #Perso
+                print (f"\t score essai {self.trial} : {self.score}")
+                if (self.replay == False):
+                    self.essai+=1
+                    if (self.essai == self.eval_par_iter):
                         if self.score > self.bestScore:
                             self.bestScore = self.score
                             self.bestParam = self.param[:]
                             self.bestid = self.trial
+                        self.trial = self.trial + 1
                         print ("\tbest score actuel",self.bestScore)
                         print ("\tbest param actuel", self.bestParam)
                         print ("\tbest id actuel", self.bestid)
-                    #Perso
-                if (self.trial == self.it_before_replay):
-                    print("Start Mode Infini")
-                    self.replay = True
-                    self.it_per_evaluation = self.replay_reset
-                    self.param = self.bestParam
+                        self.param = [random.randint(-1, 1) for i in range(8)] 
+                        self.essai = 0
+                        self.score = 0
 
-                if (self.replay == False):
-                    self.param = [random.randint(-1, 1) for i in range(8)] 
-                self.trial = self.trial + 1
-                print ("Trying strategy no.",self.trial)
-                self.iteration = self.iteration + 1
+                #Perso
+            if (self.trial == self.it_before_replay):
+                print("Start Mode Infini")
+                self.replay = True
+                self.it_per_evaluation = self.replay_reset
+                self.param = self.bestParam
 
-                return 0, 0, True # ask for reset
+            print ("Trying strategy no.",self.trial, ",", self.essai)
+            self.iteration = self.iteration + 1
+
+            return 0, 0, True # ask for reset
 
         # fonction de contrôle (qui dépend des entrées sensorielles, et des paramètres)
         translation = math.tanh ( self.param[0] + self.param[1] * sensors[sensor_front_left] + self.param[2] * sensors[sensor_front] + self.param[3] * sensors[sensor_front_right] )
         rotation = math.tanh ( self.param[4] + self.param[5] * sensors[sensor_front_left] + self.param[6] * sensors[sensor_front] + self.param[7] * sensors[sensor_front_right] )
 
+        #Perso
+        self.score += (self.log_sum_of_translation - self.last_trans) * (1-abs(self.log_sum_of_rotation - self.last_rot))
+        self.last_trans = self.log_sum_of_translation
+        self.last_rot = self.log_sum_of_rotation
+        #Perso
 
         if debug == True:
             if self.iteration % 100 == 0:
