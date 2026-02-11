@@ -4,10 +4,9 @@ import arenas
 
 # general -- first three parameters can be overwritten with command-line arguments (cf. "python tetracomposibot.py --help")
 
-display_mode = 2
-arena = 2
+display_mode = 0
+arena = 0
 position = False 
-
 # affichage
 
 display_welcome_message = False
@@ -20,7 +19,7 @@ display_time_stats = True
 # optimization
 
 evaluations = 100000
-it_per_evaluation = 1000
+it_per_evaluation = 1500
 max_iterations = evaluations * it_per_evaluation + 1
 
 # initialization : create and place robots at initial positions (returns a list containing the robots)
@@ -32,5 +31,9 @@ def initialize_robots(arena_size=-1, particle_box=-1): # particle_box: size of t
     x_center = arena_size // 2 - particle_box / 2
     y_center = arena_size // 2 - particle_box / 2
     robots = []
-    robots.append(genetic_algorithms.Robot_player(4, arena_size//2-16+8, 0, name="My Robot", team="A",evaluations=evaluations,it_per_evaluation=it_per_evaluation)) # start from left: 4, y_center
+    for i in range(4):
+        robots.append(genetic_algorithms.Robot_player(4, arena_size//2-16+i*8, 180, name="", team="A",evaluations=evaluations,it_per_evaluation=it_per_evaluation))
+    """for i in range(2):
+        robots.append(genetic_algorithms.Robot_player(94, 4+(i*2), 45, name="My Robot", team="A",evaluations=evaluations,it_per_evaluation=it_per_evaluation))
+    """#robots.append(genetic_algorithms.Robot_player(4, arena_size//2-16+8, 0, name="My Robot", team="A",evaluations=evaluations,it_per_evaluation=it_per_evaluation)) # start from left: 4, y_center
     return robots

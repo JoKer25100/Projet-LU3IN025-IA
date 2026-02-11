@@ -26,7 +26,7 @@ Fichiers importants, à modifier:
   * remarque: vous pouvez renommer ce fichier (il faudra mettre _config_Paintwars.py_ à jour).
   * __obligatoire__: donnez un nom à votre équipe (variable _team_name_), et remplissez le champs noms/prénoms/no_étudiant·e.
 * _config_Paintwars.py_:
-  _ display_mode_ = <type de rendu: temps réel (0), rapide (1), très rapide sans affichage (2))
+  _ display_mode_ = <type de rendu: temps réel (0), rapide (1), très rapide sans affichage (2)
   _ arena_ = <numéro de l'arène souhaitée, entre 0 et 4>
   _position_ = True ou False, permet de changer la position de départ de l'équipe Challenger (par défaut: False, à gauche)
 
